@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyVault - Secure Storage</title>
+  <meta name="description" content="Secure cloud storage for students. Store PDFs, results, notes, and study materials safely with StudyVault." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2" />
+</head>
+<body>
+
+  <!-- Ambient Premium Background -->
+  <div class="premium-ambient-bg">
+    <div class="ambient-blob ambient-blob-1"></div>
+    <div class="ambient-blob ambient-blob-2"></div>
+    <div class="ambient-blob ambient-blob-3"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       AUTH SCREEN
+  ═══════════════════════════════════════════════ -->
+  <div id="auth-screen" class="screen active">
+    <!-- Front page Theme Toggle -->
+    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
+      <svg viewBox="0 0 20 20" fill="none"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="auth-bg">
+      <div class="auth-blob blob-1"></div>
+      <div class="auth-blob blob-2"></div>
+      <div class="auth-blob blob-3"></div>
+    </div>
+
+    <div class="auth-container">
+      <!-- Branding -->
+      <div class="auth-brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="12" fill="url(#brandGrad)"/>
+            <path d="M10 28V16l10-6 10 6v12l-10 6-10-6z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M20 10v18M10 16l10 6 10-6" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="brandGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/>
+                <stop offset="1" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <h1 class="brand-name">StudyVault</h1>
+        <p class="brand-tagline">Your secure academic storage</p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+        <button id="tab-register" class="auth-tab" onclick="switchTab('register')">Register</button>
+        <div class="auth-tab-indicator" id="tab-indicator"></div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" required />
+            <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">
+              <svg class="eye-icon" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="login-error" class="form-error hidden"></div>
+        <button type="submit" class="btn-primary" id="login-btn">
+          <span>Sign In</span>
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="btn-secondary" onclick="loginWithBiometric()" style="width: 100%; margin-top: 10px;">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM10 14a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Login with Biometrics</span>
+        </button>
+        <p class="auth-footer">Don't have an account? <a href="#" onclick="switchTab('register')">Register now</a></p>
+        <p class="auth-footer" style="margin-top: 8px;">Want to use mobile? <a href="#" onclick="switchTab('otp')">Login with OTP</a></p>
+      </form>
+
+      <!-- OTP Login Form -->
+      <form id="otp-login-form" class="auth-form" onsubmit="handleOtpLogin(event)">
+        <!-- Step 1: Mobile Number -->
+        <div id="otp-step-1">
+          <div class="form-group">
+            <label for="login-mobile">Mobile Number</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M5.5 3A1.5 1.5 0 004 4.5v11A1.5 1.5 0 005.5 17h9a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0014.5 3h-9z" stroke="currentColor" stroke-width="1.5"/><path d="M10 14h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+              <input type="tel" id="login-mobile" placeholder="Enter your mobile number" />
+            </div>
+          </div>
+          <div id="otp-error-1" class="form-error hidden"></div>
+          <button type="button" class="btn-primary" onclick="sendOtp()">
+            <span>Send OTP</span>
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- Step 2: Enter OTP -->
+        <div id="otp-step-2" class="hidden">
+          <div class="form-group">
+            <label for="login-otp">Enter OTP</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="6" width="14" height="8" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 10h.01M10 10h.01M13 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+              <input type="text" id="login-otp" placeholder="6-digit OTP" maxlength="6" />
+            </div>
+            <span class="field-hint">Check the notification toast for your mock OTP.</span>
+          </div>
+          <div id="otp-error-2" class="form-error hidden"></div>
+          <button type="submit" class="btn-primary">
+            <span>Verify & Login</span>
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="btn-secondary" onclick="resetOtpFlow()" style="width: 100%; margin-top: 10px;">
+            Back
+          </button>
+        </div>
+        <p class="auth-footer" style="margin-top: 20px;">Login with password? <a href="#" onclick="switchTab('login')">Click here</a></p>
+      </form>
+
+      <!-- Register Form -->
+      <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="text" id="reg-name" placeholder="Your full name" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-username">Username</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 0v16M2 10h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="text" id="reg-username" placeholder="Choose a unique username" autocomplete="username" required />
+          </div>
+          <span class="field-hint">Only letters, numbers, and underscores allowed</span>
+        </div>
+        <div class="form-group">
+          <label for="reg-mobile">Mobile Number</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M5.5 3A1.5 1.5 0 004 4.5v11A1.5 1.5 0 005.5 17h9a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0014.5 3h-9z" stroke="currentColor" stroke-width="1.5"/><path d="M10 14h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <input type="tel" id="reg-mobile" placeholder="Your mobile number" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="password" id="reg-password" placeholder="Create a strong password" autocomplete="new-password" required />
+            <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)">
+              <svg class="eye-icon" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            </button>
+          </div>
+          <div class="password-strength" id="pw-strength">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <span id="strength-label">Strength</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-confirm">Confirm Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <input type="password" id="reg-confirm" placeholder="Repeat your password" autocomplete="new-password" required />
+          </div>
+        </div>
+        <div id="reg-error" class="form-error hidden"></div>
+        <button type="submit" class="btn-primary" id="register-btn">
+          <span>Create Account</span>
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <p class="auth-footer">Already have an account? <a href="#" onclick="switchTab('login')">Sign in</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ambient Premium Background -->
+  <div class="premium-ambient-bg">
+    <div class="ambient-blob ambient-blob-1"></div>
+    <div class="ambient-blob ambient-blob-2"></div>
+    <div class="ambient-blob ambient-blob-3"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       DASHBOARD SCREEN
+  ═══════════════════════════════════════════════ -->
+  <div id="dashboard-screen" class="screen">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon small">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="40" height="40" rx="12" fill="url(#brandGrad2)"/>
+            <path d="M10 28V16l10-6 10 6v12l-10 6-10-6z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M20 10v18M10 16l10 6 10-6" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="brandGrad2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/>
+                <stop offset="1" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="brand-name">StudyVault</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="nav-all" onclick="filterFiles('all')" data-filter="all">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>All Files</span>
+          <span class="nav-badge" id="badge-all">0</span>
+        </button>
+        <button class="nav-item" id="nav-pdf" onclick="filterFiles('pdf')" data-filter="pdf">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 3h7l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M12 3v5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 11h6M7 14h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>PDFs</span>
+          <span class="nav-badge" id="badge-pdf">0</span>
+        </button>
+        <button class="nav-item" id="nav-results" onclick="filterFiles('results')" data-filter="results">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M9 11l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span>Results</span>
+          <span class="nav-badge" id="badge-results">0</span>
+        </button>
+        <button class="nav-item" id="nav-notes" onclick="filterFiles('notes')" data-filter="notes">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 4h12v12H4zM8 4v12M4 8h4M4 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Notes</span>
+          <span class="nav-badge" id="badge-notes">0</span>
+        </button>
+        <button class="nav-item" id="nav-certificate" onclick="filterFiles('certificate')" data-filter="certificate">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M7 14l-2 4 5-2 5 2-2-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 8l1.5 1.5L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Certificate</span>
+          <span class="nav-badge" id="badge-certificate">0</span>
+        </button>
+        <button class="nav-item" id="nav-reminders" onclick="showReminders()" data-filter="reminders">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M6 2v2M14 2v2M4 6h12M4 4h12v12H4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10h.01M12 10h.01M8 14h.01M12 14h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Reminders</span>
+          <span class="nav-badge" id="badge-reminders" style="display:none;">0</span>
+        </button>
+        <button class="nav-item" id="nav-other" onclick="filterFiles('other')" data-filter="other">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 3h7l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M12 3v5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Other</span>
+          <span class="nav-badge" id="badge-other">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-storage">
+        <div class="storage-label">
+          <span>Storage Used</span>
+          <span id="storage-used-label">0 MB</span>
+        </div>
+        <div class="storage-bar">
+          <div class="storage-fill" id="storage-fill"></div>
+        </div>
+        <span class="storage-limit">of 500 MB</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebar-avatar">S</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebar-name">Student</span>
+          <span class="user-role">Student</span>
+        </div>
+        <button class="btn-icon" onclick="showUserMenu(event)" id="user-menu-btn" title="Account options">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="5" r="1.5" fill="currentColor"/><circle cx="10" cy="10" r="1.5" fill="currentColor"/><circle cx="10" cy="15" r="1.5" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- User context menu -->
+    <div id="user-context-menu" class="context-menu hidden">
+      <button onclick="toggleTheme()" class="context-item">
+        <svg viewBox="0 0 20 20" fill="none" id="theme-icon-svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="theme-text">Dark Mode</span>
+      </button>
+      <button onclick="openProfileModal()" class="context-item">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Profile Settings
+      </button>
+      <button onclick="handleLogout()" class="context-item danger">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M8 17H4a1 1 0 01-1-1V4a1 1 0 011-1h4M13 14l3-4-3-4M8 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Sign Out
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </button>
+          <div class="search-wrapper">
+            <svg class="search-icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M15 15l-2.5-2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input type="text" id="search-input" class="search-input" placeholder="Search files..." oninput="searchFiles(this.value)" />
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-upload" onclick="openUploadModal()" id="upload-btn">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v8M6 8l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Upload Files
+          </button>
+          <div class="view-toggle">
+            <button class="view-btn active" id="view-grid" onclick="setView('grid')" title="Grid view">
+              <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+            </button>
+            <button class="view-btn" id="view-list" onclick="setView('list')" title="List view">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M5 4h9M5 8h9M5 12h9M2 4h.5M2 8h.5M2 12h.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Stats Bar -->
+      <section class="stats-bar" id="stats-bar">
+        <div class="stat-card" onclick="filterFiles('all')">
+          <div class="stat-icon all">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-total">0</span>
+            <span class="stat-label">Total Files</span>
+          </div>
+        </div>
+        <div class="stat-card" onclick="filterFiles('pdf')">
+          <div class="stat-icon pdf">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M5 3h7l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M12 3v5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-pdf">0</span>
+            <span class="stat-label">PDFs</span>
+          </div>
+        </div>
+        <div class="stat-card" onclick="filterFiles('results')">
+          <div class="stat-icon results">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M9 11l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-results">0</span>
+            <span class="stat-label">Results</span>
+          </div>
+        </div>
+        <div class="stat-card" onclick="filterFiles('notes')">
+          <div class="stat-icon notes">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 4h12v12H4zM8 4v12M4 8h4M4 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-notes">0</span>
+            <span class="stat-label">Notes</span>
+          </div>
+        </div>
+        <div class="stat-card" onclick="filterFiles('certificate')">
+          <div class="stat-icon certificate">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M7 14l-2 4 5-2 5 2-2-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 8l1.5 1.5L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value" id="stat-certificate">0</span>
+            <span class="stat-label">Certificates</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Files Section -->
+      <section class="files-section">
+        <div class="section-header">
+          <h2 class="section-title" id="section-title">All Files</h2>
+          <div class="sort-wrapper">
+            <label for="sort-select" class="sort-label">Sort by:</label>
+            <select id="sort-select" class="sort-select" onchange="sortFiles(this.value)">
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+              <option value="size-desc">Largest First</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="40" r="36" fill="#f0f0ff"/>
+              <path d="M28 50V34l12-8 12 8v16l-12 8-12-8z" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M40 26v28M28 34l12 8 12-8" stroke="#6366f1" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>No files yet</h3>
+          <p>Upload your first file to get started</p>
+          <button class="btn-primary" onclick="openUploadModal()">
+            <span>Upload Files</span>
+            <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v8M6 8l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- File Grid -->
+        <div id="files-grid" class="files-grid hidden"></div>
+
+        <!-- File List -->
+        <div id="files-list" class="files-list hidden">
+          <div class="list-header">
+            <span>Name</span>
+            <span>Category</span>
+            <span>Size</span>
+            <span>Date</span>
+            <span>Actions</span>
+          </div>
+          <div id="files-list-body"></div>
+        </div>
+      </section>
+
+      <!-- Reminders Section -->
+      <section id="reminders-section" class="files-section hidden">
+        <div class="section-header">
+          <h2 class="section-title">Deadlines & Reminders</h2>
+        </div>
+        <div class="reminders-container">
+          <form id="reminder-form" onsubmit="addReminder(event)" class="reminder-form">
+            <input type="text" id="reminder-text" placeholder="Add a new task or deadline..." required class="reminder-input" />
+            <input type="date" id="reminder-date" class="reminder-date" required />
+            <button type="submit" class="btn-primary">Add</button>
+          </form>
+          <div id="reminders-list" class="reminders-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       UPLOAD MODAL
+  ═══════════════════════════════════════════════ -->
+  <div id="upload-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'upload-modal')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="upload-title">
+      <div class="modal-header">
+        <h2 id="upload-title">Upload Files</h2>
+        <button class="btn-icon modal-close" onclick="closeModal('upload-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="drop-zone"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)"
+             onclick="document.getElementById('file-input').click()">
+          <div class="drop-icon">
+            <svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" fill="#f0f0ff"/><path d="M30 20v16M22 26l8-8 8 8" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 38h20" stroke="#6366f1" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </div>
+          <p class="drop-title">Drag & drop files here</p>
+          <p class="drop-sub">or click to browse</p>
+          <span class="drop-types">PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, PNG, and more</span>
+          <input type="file" id="file-input" multiple accept="*/*" onchange="handleFileSelect(event)" style="display:none" />
+        </div>
+
+        <!-- File Queue -->
+        <div id="file-queue" class="file-queue hidden">
+          <h3 class="queue-title">Files to Upload</h3>
+          <div id="queue-list" class="queue-list"></div>
+        </div>
+
+        <!-- Category Select -->
+        <div class="form-group" id="category-group" style="display:none">
+          <label for="upload-category">Category</label>
+          <div class="select-wrapper">
+            <select id="upload-category" class="select-input" onchange="handleCategoryChange()">
+              <option value="pdf">📄 PDF</option>
+              <option value="results">📊 Results / Marksheet</option>
+              <option value="notes">📝 Notes</option>
+              <option value="certificate">🏆 Certificate</option>
+              <option value="other">📁 Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="form-group" id="tags-group" style="display:none">
+          <label for="upload-tags">Tags (optional)</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M9.293 2.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-6-6A1 1 0 012 9.586V4a2 2 0 012-2h4.586z" stroke="currentColor" stroke-width="1.5"/><circle cx="6.5" cy="6.5" r="1" fill="currentColor"/></svg>
+            </span>
+            <input type="text" id="upload-tags" placeholder="e.g., math, semester-2, important" />
+          </div>
+          <span class="field-hint">Comma-separated tags for easy searching</span>
+        </div>
+
+        <!-- Encryption -->
+        <div class="form-group" id="encrypt-group" style="display:none; margin-top: 15px;">
+          <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="upload-encrypt" style="width: 16px; height: 16px;" />
+            <span style="font-weight: 500; color: var(--text-primary);">🔒 Encrypt File (End-to-End Encryption)</span>
+          </label>
+          <span class="field-hint" style="margin-left: 24px; display: block;">Only you will be able to read this file.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('upload-modal')">Cancel</button>
+        <button class="btn-primary" id="upload-confirm-btn" onclick="confirmUpload()" disabled>
+          <span>Upload</span>
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v8M6 8l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       FILE PREVIEW MODAL
+  ═══════════════════════════════════════════════ -->
+  <div id="preview-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'preview-modal')">
+    <div class="modal modal-fullscreen" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+      <div class="modal-header">
+        <h2 id="preview-title">File Preview</h2>
+        <button class="btn-icon modal-close" onclick="closeModal('preview-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body preview-container" style="display: flex; flex-direction: row; gap: 20px; padding: 0;">
+        <div class="preview-body" id="preview-body" style="flex: 2; padding: 20px; border-right: 1px solid var(--border); overflow-y: auto;"></div>
+        <div class="notepad-section" style="flex: 1; display: flex; flex-direction: column; padding: 20px 20px 20px 0;">
+          <div class="notepad-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">Quick Notes</h3>
+            <span id="notepad-status" style="font-size: 0.8rem; color: var(--text-3);"></span>
+          </div>
+          <textarea id="notepad-textarea" style="flex: 1; resize: none; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: inherit; font-size: 0.95rem; background: var(--bg-primary); color: var(--text-primary); transition: border-color 0.2s;" placeholder="Jot down notes while reading..." oninput="saveQuickNotes()"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('preview-modal')">Close</button>
+        <button class="btn-primary" id="preview-download-btn">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v8M6 12l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a1 1 0 001 1h10a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SHARE MODAL
+  ═══════════════════════════════════════════════ -->
+  <div id="share-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'share-modal')">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Share File</h2>
+        <button class="btn-icon modal-close" onclick="closeModal('share-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 15px; color: var(--text-2); font-size: 0.95rem;">Generate a secure mock link to share this file.</p>
+        <div class="form-group">
+          <label>Expiry Time</label>
+          <div class="select-wrapper">
+            <select id="share-expiry" class="select-input">
+              <option value="24h">24 Hours</option>
+              <option value="7d">7 Days</option>
+              <option value="never">Never</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 15px;">
+          <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px;">
+            <input type="checkbox" id="share-password-toggle" onchange="document.getElementById('share-password-group').style.display = this.checked ? 'block' : 'none'" />
+            <span>Require Password</span>
+          </label>
+        </div>
+        <div class="form-group" id="share-password-group" style="display: none; margin-top: 10px;">
+          <input type="password" id="share-password" placeholder="Enter a secure password" class="input-wrapper" style="width: 100%; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);" />
+        </div>
+        
+        <div id="share-link-result" style="display: none; margin-top: 20px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 13px; color: var(--text-primary);">
+          <span id="share-link-text"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('share-modal')">Cancel</button>
+        <button class="btn-primary" onclick="generateShareLink()" id="share-generate-btn">Generate Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PROFILE MODAL
+  ═══════════════════════════════════════════════ -->
+  <div id="profile-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'profile-modal')">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-title">
+      <div class="modal-header">
+        <h2 id="profile-title">Profile Settings</h2>
+        <button class="btn-icon modal-close" onclick="closeModal('profile-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-avatar-section">
+          <div class="profile-avatar-large" id="profile-avatar-display">S</div>
+          <div>
+            <h3 id="profile-display-name">Student</h3>
+            <p id="profile-display-username" class="text-muted">@username</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="profile-name">Full Name</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input type="text" id="profile-name" placeholder="Your full name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="profile-mobile">Mobile Number</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M5.5 3A1.5 1.5 0 004 4.5v11A1.5 1.5 0 005.5 17h9a1.5 1.5 0 001.5-1.5v-11A1.5 1.5 0 0014.5 3h-9z" stroke="currentColor" stroke-width="1.5"/><path d="M10 14h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <input type="tel" id="profile-mobile" placeholder="Your mobile number" />
+          </div>
+        </div>
+        <hr class="divider" />
+        <h3 class="section-subtitle">Change Password</h3>
+        <div class="form-group">
+          <label for="profile-old-pw">Current Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="profile-old-pw" placeholder="Enter current password" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="profile-new-pw">New Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="profile-new-pw" placeholder="Enter new password" />
+          </div>
+        </div>
+        <hr class="divider" />
+        <h3 class="section-subtitle">Security Devices</h3>
+        <button type="button" class="btn-secondary" onclick="registerBiometric()" id="profile-biometric-btn" style="width: 100%; margin-bottom: 10px;">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM10 14a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Register Fingerprint / Face ID
+        </button>
+        <div id="profile-error" class="form-error hidden"></div>
+        <div id="profile-success" class="form-success hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('profile-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       DELETE CONFIRM MODAL
+  ═══════════════════════════════════════════════ -->
+  <div id="delete-modal" class="modal-overlay hidden" onclick="closeModalOnOverlay(event, 'delete-modal')">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Delete File</h2>
+        <button class="btn-icon modal-close" onclick="closeModal('delete-modal')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="delete-icon">
+          <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="22" fill="#fee2e2"/><path d="M18 18l12 12M30 18L18 30" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </div>
+        <p class="delete-message">Are you sure you want to delete <strong id="delete-filename"></strong>? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('delete-modal')">Cancel</button>
+        <button class="btn-danger" id="delete-confirm-btn" onclick="confirmDelete()">Delete File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
